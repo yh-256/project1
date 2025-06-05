@@ -1,0 +1,43 @@
+name: Go CI
+
+on:
+  push:
+    branches: [ main ] # Adjust if your main branch is different
+  pull_request:
+    branches: [ main ] # Adjust if your main branch is different
+
+jobs:
+  test-and-lint:
+    name: Test and Lint Go Code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.21' # Specify your Go version
+
+      - name: Verify Go Modules
+        run: go mod verify
+
+      - name: Tidy Go Modules
+        run: go mod tidy
+
+      - name: Run tests with coverage
+        run: go test -v -coverprofile=coverage.txt -covermode=atomic ./...
+
+      # - name: Upload coverage to Codecov (Optional)
+      #   uses: codecov/codecov-action@v3
+      #   with:
+      #     token: ${{ secrets.CODECOV_TOKEN }} # Only if you set up Codecov
+      #     files: ./coverage.txt
+      #     fail_ci_if_error: true
+
+      - name: Install golangci-lint
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.55.2 # Or latest version
+
+      - name: Run golangci-lint
+        run: $(go env GOPATH)/bin/golangci-lint run ./... --timeout=5m
