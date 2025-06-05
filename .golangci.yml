@@ -1,0 +1,77 @@
+run:
+  timeout: 5m
+  # skip-dirs: # Not using this for mocks, using exclude-rules instead
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+    check-blank: false # Changed to false to allow ignoring errors with _
+  govet:
+    check-shadowing: true
+  gocyclo:
+    min-complexity: 15
+  maligned:
+    suggest-new: true
+  dupl:
+    threshold: 100
+  goconst:
+    min-len: 2
+    min-occurrences: 3
+
+linters:
+  enable:
+    - bodyclose
+    - deadcode
+    # - depguard # Temporarily disabled
+    - dogsled
+    - dupl
+    - errcheck
+    - exportloopref
+    - funlen
+    - gochecknoinits
+    - goconst
+    - gocritic
+    - gocyclo
+    - gofmt
+    - goimports
+    - revive
+    - gomnd
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - misspell
+    - nakedret
+    - noctx
+    - nolintlint
+    - staticcheck
+    - structcheck
+    - stylecheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - varcheck
+    - whitespace
+
+issues:
+  exclude-rules:
+    - path: _test\\.go # Use double backslash for shell
+      linters:
+        - funlen
+        - goconst
+        - gocritic
+        - gocyclo
+        - gomnd
+        - dupl
+    - path: internal/.*/.*_mock\\.go # Regex for mock files in subdirectories of internal
+      linters:
+        - revive
+        - errcheck
+        - unparam
+        - funlen # Mocks can be long
+        - goconst
+
+  max-issues-per-linter: 0
+  max-same-issues: 0
